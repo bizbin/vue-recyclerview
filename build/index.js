@@ -23,7 +23,7 @@ rollup.rollup({
         extensions: ['.css']
       }),
       babel(),
-      uglify()
+      // uglify()
     ]
 })
 .then(bundle => {

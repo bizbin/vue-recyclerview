@@ -3,4 +3,1355 @@
  * (c) 2017 Awe <hilongjw@gmail.com>
  * Released under the MIT License.
  */
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):t.RecyclerView=e()}(this,function(){"use strict";function t(t){if(!t)return l;if(u.test(t.type)){var e=t.touches[0];return{x:e.clientX,y:e.clientY}}return c.test(t.type)?{x:t.clientX,y:t.clientY}:l}function e(t,e){for(var i in e)if(e[i].test(t[i]))return!0;return!1}function i(t,e){if(null==t)throw new TypeError("Cannot convert undefined or null to object");for(var i=Object(t),s=1;s<arguments.length;s++){var o=arguments[s];if(o)for(var n in o)Object.prototype.hasOwnProperty.call(o,n)&&(i[n]=o[n])}return i}function s(t,e){for(var i=0,s=t.length;i<s;i++)if(e(t[i],i))return t[i]}function o(t,e,i){this.RUNWAY_ITEMS=i.prerender,this.RUNWAY_ITEMS_OPPOSITE=i.remain,this.ANIMATION_DURATION_MS=i.animation_duration_ms,this.TOMBSTONE_CLASS=i.tombstone_class,this.INVISIBLE_CLASS=i.invisible_class,this.MAX_COUNT=d,this.column=i.column||1,this.waterflow=i.waterflow,this.anchorItem={index:0,offset:0},this.timer=null,this.firstAttachedItem_=0,this.lastAttachedItem_=0,this.anchorScrollTop=0,this.tombstoneSize_=0,this.tombstoneWidth_=0,this.tombstones_=[],this.scroller_=t,this.source_=e,this.items_=i.list||[],this.loadedItems_=0,this.requestInProgress_=!1,this.cacheVM=i.cacheVM,this.options=i,this.source_.fetch||this.setItems(i.list),this.curPos=0,this.unusedNodes=[],this.baseNode=document.createElement("div"),this.scroller_.addEventListener("scroll",this.onScroll_.bind(this)),window.addEventListener("resize",this.onResize_.bind(this)),window.addEventListener("orientationchange",this.onResize_.bind(this)),this.initPosList(),this.onResize_()}function n(t){var e=(arguments.length>1&&void 0!==arguments[1]&&arguments[1],y(t));return t.component(e.name,e),e}var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},h=(function(){function t(t){this.value=t}function e(e){function i(t,e){return new Promise(function(i,o){var h={key:t,arg:e,resolve:i,reject:o,next:null};r?r=r.next=h:(n=r=h,s(t,e))})}function s(i,n){try{var r=e[i](n),h=r.value;h instanceof t?Promise.resolve(h.value).then(function(t){s("next",t)},function(t){s("throw",t)}):o(r.done?"return":"normal",r.value)}catch(t){o("throw",t)}}function o(t,e){switch(t){case"return":n.resolve({value:e,done:!0});break;case"throw":n.reject(e);break;default:n.resolve({value:e,done:!1})}n=n.next,n?s(n.key,n.arg):r=null}var n,r;this._invoke=i,"function"!=typeof e.return&&(this.return=void 0)}"function"==typeof Symbol&&Symbol.asyncIterator&&(e.prototype[Symbol.asyncIterator]=function(){return this}),e.prototype.next=function(t){return this._invoke("next",t)},e.prototype.throw=function(t){return this._invoke("throw",t)},e.prototype.return=function(t){return this._invoke("return",t)}}(),function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}),a=function(){function t(t,e){for(var i=0;i<e.length;i++){var s=e[i];s.enumerable=s.enumerable||!1,s.configurable=!0,"value"in s&&(s.writable=!0),Object.defineProperty(t,s.key,s)}}return function(e,i,s){return i&&t(e.prototype,i),s&&t(e,s),e}}();Object.keys||(Object.keys=function(){var t=Object.prototype.hasOwnProperty,e=!{toString:null}.propertyIsEnumerable("toString"),i=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],s=i.length;return function(o){if("object"!==(void 0===o?"undefined":r(o))&&"function"!=typeof o||null===o)throw new TypeError("Object.keys called on non-object");var n=[];for(var h in o)t.call(o,h)&&n.push(h);if(e)for(var a=0;a<s;a++)t.call(o,i[a])&&n.push(i[a]);return n}}());var l={x:0,y:0},c=/mouse(down|move|up)/,u=/touch(start|move|end)/,m=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(t){window.setTimeout(t,1e3/60)},d=1/0;o.prototype={onResize_:function(){var t=this.source_.createTombstone(this.baseNode.cloneNode(!0));t.style.position="absolute",this.scroller_.appendChild(t),t.classList.remove(this.INVISIBLE_CLASS),this.tombstoneSize_=t.offsetHeight/this.column,this.tombstoneWidth_=t.offsetWidth,this.scroller_.removeChild(t);for(var e=0;e<this.items_.length;e++)this.items_[e].top=-1,this.items_[e].height=this.items_[e].width=this.items_[e].cacheHeightCount=0;this.onScroll_()},onScroll_:function(){var t=this.scroller_.scrollTop-this.anchorScrollTop;0==this.scroller_.scrollTop?this.anchorItem={index:0,offset:0}:this.anchorItem=this.calculateAnchoredItem(this.anchorItem,t),this.anchorScrollTop=this.scroller_.scrollTop;var e=this.calculateAnchoredItem(this.anchorItem,this.scroller_.offsetHeight);t<0?this.fill(this.anchorItem.index-this.RUNWAY_ITEMS,e.index+this.RUNWAY_ITEMS_OPPOSITE):this.fill(this.anchorItem.index-this.RUNWAY_ITEMS_OPPOSITE,e.index+this.RUNWAY_ITEMS)},calculateAnchoredItem:function(t,e){if(0===e)return t;e+=t.offset;var i=t.index,s=0;if(e<0){for(;e<0&&i>0&&this.items_[i-1].height;)e+=this.items_[i-1].height,i--;s=Math.max(-i,Math.ceil(Math.min(e,0)/this.tombstoneSize_))}else{for(;e>0&&i<this.items_.length&&this.items_[i].height&&this.items_[i].height<e;)e-=this.items_[i].height,i++;(i>=this.items_.length||!this.items_[i].height)&&(s=Math.floor(Math.max(e,0)/this.tombstoneSize_))}return i+=s,e-=s*this.tombstoneSize_,i=Math.min(i,this.MAX_COUNT-1),{index:Math.floor(i/this.column)*this.column,offset:e}},fill:function(t,e){this.firstAttachedItem_=Math.max(0,t),this.lastAttachedItem_=e,this.attachContent()},getTombstone:function(){var t=this.tombstones_.pop();return t?(t.classList.remove(this.INVISIBLE_CLASS),t.style.opacity=1,t.style.transform="",t.style.transition="",t):this.source_.createTombstone(this.baseNode.cloneNode(!0))},layoutInView:function(t){var e=this.posList.get(Math.floor(t/this.column),t%this.column);if(!e)return!0;var i=e-this.anchorScrollTop;return i>.5*-window.innerHeight&&i<window.innerHeight},getUnUsedNodes:function(t){if(this.waterflow)for(var e=0,i=this.items_.length;e<i;e++)!this.items_[e].node||!t&&this.layoutInView(e)||(this.items_[e].vm?this.clearItem(this.items_[e]):this.clearTombstone(this.items_[e]),this.items_[e].vm=null,this.items_[e].node=null);else for(var s=0,o=this.items_.length;s<o;s++)s!==this.firstAttachedItem_?(this.items_[s].vm?this.clearItem(this.items_[s]):this.clearTombstone(this.items_[s]),this.items_[s].vm=null,this.items_[s].node=null):s=this.lastAttachedItem_-1},clearItem:function(t){if(this.options.reuseVM)this.scroller_.removeChild(t.node),this.source_.free(t.data);else{if(this.cacheVM&&t.node)return this.scroller_.removeChild(t.node);t.vm.$destroy(),t.node&&this.unusedNodes.push(t.node)}},clearTombstone:function(t){t.node&&(t.node.classList.contains(this.TOMBSTONE_CLASS)?(this.tombstones_.push(t.node),this.tombstones_[this.tombstones_.length-1].classList.add(this.INVISIBLE_CLASS)):this.unusedNodes.push(t.node))},clearUnUsedNodes:function(){for(;this.unusedNodes.length;)this.scroller_.removeChild(this.unusedNodes.pop())},getNodePosition:function(){this.anchorScrollTop=0;for(var t=0;t<this.anchorItem.index;t++)this.anchorScrollTop+=this.items_[t].height||this.tombstoneSize_;this.anchorScrollTop+=this.anchorItem.offset,this.curPos=this.anchorScrollTop-this.anchorItem.offset;for(var e=this.anchorItem.index;e>this.firstAttachedItem_;)this.curPos-=this.items_[e-1].height||this.tombstoneSize_,e--;for(;e<this.firstAttachedItem_;)this.curPos+=this.items_[e].height||this.tombstoneSize_,e++},initPosList:function(){for(var t={},e=0,i=this.column;e<i;e++)t[e]=this.curPos;this.posList={data:{0:t},get:function(t,e){if(!this.data[t]){for(var i={},s=0,o=this.column;s<o;s++)i[s]=this.curPos;this.data[t]=i}return void 0===e?this.data[t]:this.data[t][e]},set:function(t,e,i){this.get(t)[e]=i}}},tombstoneLayout:function(t){var e=void 0,i=void 0,s=void 0;for(e in t)i=t[e],s=e%this.column*this.items_[e].width,this.items_[e].node.style.transform="translate3d("+s+"px,"+(this.anchorScrollTop+i[1])*this.column+"px, 0) scale("+this.tombstoneWidth_/this.items_[e].width+", "+this.tombstoneSize_/this.items_[e].height+")",this.items_[e].node.offsetTop,i[0].offsetTop,this.items_[e].node.style.transition="transform "+this.ANIMATION_DURATION_MS+"ms"},itemLayout:function(t){var e=void 0,i=void 0,s=0,o=0,n=0;for(e=this.firstAttachedItem_;e<this.lastAttachedItem_;e++)i=t[e],this.waterflow&&(n=Math.floor(e/this.column)),s=e%this.column*(this.items_[e].width||this.tombstoneWidth_),o=this.waterflow?this.posList.get(n,e%this.column):this.curPos,i&&(i[0].style.transition="transform "+this.ANIMATION_DURATION_MS+"ms, opacity "+this.ANIMATION_DURATION_MS+"ms",i[0].style.transform="translate3d("+s+"px,"+o+"px, 0) scale("+this.items_[e].width/this.tombstoneWidth_+", "+this.items_[e].height/this.tombstoneSize_+")",i[0].style.opacity=0),this.items_[e].node&&this.curPos!==this.items_[e].top&&(i||(this.items_[e].node.style.transition=""),this.items_[e].node.style.transform="translate3d("+s+"px,"+o+"px, 0)"),this.items_[e].top=o,(e+1)%this.column==0&&(this.curPos+=(this.items_[e].height||this.tombstoneSize_)*this.column),this.waterflow&&this.posList.set(n+1,e%this.column,o+(this.items_[e].height||this.tombstoneSize_)*this.column)},setAnimatePosition:function(t){this.tombstoneLayout(t),this.itemLayout(t)},renderItems:function(){var t={},e=void 0,i=[],s=void 0,o=Math.floor((this.lastAttachedItem_+this.RUNWAY_ITEMS)/this.column)*this.column;for(o>this.MAX_COUNT&&(this.lastAttachedItem_=this.MAX_COUNT),s=this.firstAttachedItem_;s<this.lastAttachedItem_;s++){for(;this.items_.length<=s;)this.addItem_();if(this.items_[s].node){if(!this.items_[s].node.classList.contains(this.TOMBSTONE_CLASS)||!this.items_[s].data)continue;this.ANIMATION_DURATION_MS?(this.items_[s].node.style.zIndex=1,t[s]=[this.items_[s].node,this.items_[s].top-this.anchorScrollTop]):(this.items_[s].node.classList.add(this.INVISIBLE_CLASS),this.tombstones_.push(this.items_[s].node)),this.items_[s].node=null}this.waterflow?this.layoutInView(s)&&(e=this.items_[s].data?this.source_.render(this.items_[s].data,this.unusedNodes.pop()||this.baseNode.cloneNode(!0),this.items_[s]):this.getTombstone(),e.style.position="absolute",this.items_[s].top=-1,this.items_[s].node=e,i.push(e)):(e=this.items_[s].data?this.source_.render(this.items_[s].data,this.unusedNodes.pop()||this.baseNode.cloneNode(!0),this.items_[s]):this.getTombstone(),e.style.position="absolute",this.items_[s].top=-1,this.items_[s].node=e,i.push(e))}var n=i.length;for(s=0;s<n;s++)this.scroller_.appendChild(i[s]);return t},cacheItemHeight:function(t){for(var e=this.firstAttachedItem_;e<this.lastAttachedItem_;e++)this.items_[e].data&&this.items_[e].node&&(t||!this.items_[e].height)?(this.items_[e].height=this.items_[e].node.offsetHeight/this.column,this.items_[e].width=this.items_[e].node.offsetWidth,this.items_[e].cacheHeightCount=0):this.items_[e].cacheHeightCount<10&&(this.items_[e].cacheHeightCount++,this.items_[e].height&&this.items_[e].node&&this.items_[e].height!==this.items_[e].node.offsetHeight/this.column&&(this.items_[e].height=this.items_[e].node.offsetHeight/this.column))},attachContent:function(){var t=this;this.getUnUsedNodes();var e=this.renderItems();this.clearUnUsedNodes(),this.cacheItemHeight(),this.getNodePosition(),this.setAnimatePosition(e),this.ANIMATION_DURATION_MS&&setTimeout(function(){t.tombstoneAnimation(e)},this.ANIMATION_DURATION_MS),this.maybeRequestContent()},setItems:function(t){t=t||[],this.items_=t,this.MAX_COUNT=t.length},scrollToIndex:function(t){var e=this.lastAttachedItem_-this.firstAttachedItem_;this.fill(t-e,t+1)},setScrollRunway:function(){this.scrollRunwayEnd_=Math.max(this.scrollRunwayEnd_,this.curPos+this.SCROLL_RUNWAY),this.scrollRunway_.style.transform="translate(0, "+this.scrollRunwayEnd_+"px)",this.scroller_.scrollTop=this.anchorScrollTop},tombstoneAnimation:function(t){var e=void 0;for(var i in t)e=t[i],e[0].classList.add(this.INVISIBLE_CLASS),this.tombstones_.push(e[0]);t=null},maybeRequestContent:function(){var t=this;if(!this.requestInProgress_){var e=this.lastAttachedItem_-this.loadedItems_;e<=0||(this.requestInProgress_=!0,this.source_.fetch&&this.source_.fetch(e,this.loadedItems_).then(function(e){t.MAX_COUNT=e.count,t.addContent(e.list)}))}},addItem_:function(){this.items_.push({vm:null,data:null,node:null,height:0,width:0,top:0})},addContent:function(t){if(t.length){this.requestInProgress_=!1;for(var e=void 0,i=0;i<t.length;i++)this.items_.length<=this.loadedItems_&&this.addItem_(),this.loadedItems_<=this.MAX_COUNT&&(e=this.loadedItems_++,this.items_[e].data=t[i]);this.attachContent()}},clear:function(){this.loadedItems_=0,this.requestInProgress_=!1,this.firstAttachedItem_=-1,this.lastAttachedItem_=-1,this.getUnUsedNodes(!0),this.clearUnUsedNodes(),this.items_=[],this.onResize_()},destroy:function(){this.scroller_.removeEventListener("scroll",this.onScroll_),window.removeEventListener("resize",this.onResize_),window.removeEventListener("orientationchange",this.onResize_),this.clear()}};var f=function(){function t(e,i){var o=this;h(this,t),this.itemRender=i.item,this.TombstoneRender=i.tombstone,this.fetch=i.fetch,this.Vue=e,this.options=i,this.itemCache={data:{},length:0,get:function(t){return this.data[t]},set:function(t,e){this.length++,this.data[t]=e,this.length>i.cacheVM&&i.cacheVM>50&&this.recycle(10,t)},recycle:function(t,e){for(var i=void 0,s=Object.keys(this.data),o=s.length;t;)t--,i=s[Math.floor(Math.random()*o)],this.data[i]&&this.length--&&this.data[i].$destroy(),this.data[i]=null}},this.reuseVM={queue:[],generate:function(t,e){var i=s(o.reuseVM.queue,function(t){return!t.inuse});if(i)i.vm.data=t,i.inuse=!0,i.id=t.id;else{var n={props:{data:t}};o.options.props.data=t,o.options.props&&Object.keys(o.options.props).map(function(t){n.props[t]=o.options.props[t]});var r={el:e,data:n.props,render:function(t){return t(o.itemRender,n)}};i={id:t.id,inuse:!0,vm:new o.Vue(r)},o.reuseVM.queue.push(i)}return i.vm},free:function(t){s(this.queue,function(e){return e.id===t}).inuse=!1},destroy:function(t,e){for(var i=0,s=this.queue.length;i<s;i++)(this.queue[i].id===t||e)&&(this.queue.vm&&this.queue.vm.$destroy(),this.queue.splice(i,1))}}}return a(t,[{key:"createTombstone",value:function(t){var e=this;return new this.Vue({el:t,render:function(t){return t(e.TombstoneRender)}}).$el}},{key:"free",value:function(t){this.reuseVM.free(t.id)}},{key:"render",value:function(t,e,i){var s=this;if(this.options.reuseVM){var o=this.reuseVM.generate(t,e);return i.vm=o,o.$el}var n=void 0,r={props:{data:t}};this.options.props.data=t,this.options.props&&Object.keys(this.options.props).map(function(t){r.props[t]=s.options.props[t]});var h={el:e,render:function(t){return t(s.itemRender,r)}};return this.options.cacheVM?(n=this.itemCache.get(t.id))?(i.vm=n,n.$el):(n=new this.Vue(h),this.itemCache.set(t.id,n),i.vm=n,n.$el):(n=new this.Vue(h),i.vm=n,n.$el)}},{key:"destroy",value:function(){return this.reuseVM.destroy(null,!0),this.reuseVM.queue}}]),t}(),_={render:function(t){return t("div",{attrs:{class:"recyclerview-loading"}},"Loading...")}},p={render:function(t){return t("div",{attrs:{class:"recyclerview-item tombstone"},style:{height:"100px",width:"100%"}},"")}},v={preventDefaultException:{tagName:/^(INPUT|TEXTAREA|BUTTON|SELECT|IMG)$/},distance:50,animation_duration_ms:200,tombstone_class:"tombstone",invisible_class:"invisible",prerender:20,remain:10,preventDefault:!1,column:1,waterflow:!1,cacheVM:0,reuseVM:!1,props:{}},y=function(s){return{name:"RecyclerView",props:{fetch:Function,list:Array,item:Object,loading:Object,tombstone:{type:Object,default:function(){return p}},column:Number,prerender:Number,remain:Number,waterflow:Boolean,preventDefault:Boolean,options:Object,tag:{type:String,default:"div"}},render:function(t){return t(this.tag,{attrs:{class:"recyclerview-container"}},[t(this.loading||_),t(this.tag,{attrs:{class:"recyclerview"},on:{touchstart:this._start,touchmove:this._move,touchend:this._end,touchcancel:this._end,mousedown:this._start,mousemove:this._move,mouseup:this._end}})])},data:function(){return{startPointer:{x:0,y:0},_options:{},distance:0,pulling:!1,_contentSource:null,scroller:null}},mounted:function(){this.init()},beforeDestroy:function(){this.scroller.destroy(),this.scroller=null},methods:{init:function(){this._options=i({},v,{prerender:this.prerender||v.prerender,remain:this.remain||v.remain,column:this.column||v.column,waterflow:this.waterflow||v.waterflow,fetch:this.fetch,list:this.list,item:this.item,loading:this.loading,tombstone:this.tombstone},this.options),this._contentSource=new f(s,this._options),this.$list=this.$el.querySelector(".recyclerview"),this.scroller=new o(this.$list,this._contentSource,this._options),this.$emit("inited")},scrollToIndex:function(t){var e=this;if(this.waterflow)for(var i=0,s=this.scroller.items_.length;i<s;i++)i===t&&this._scrollTo(this.scroller.items_[i].top-this.scroller.items_[i].height*this._options.column+this.$list.offsetWidth);else t=Number(t),this.scroller.scrollToIndex(t),this.$nextTick(function(){e._scrollToBottom()})},_scrollTo:function(t){t=t||0,this.$list.scrollTop=Number(t)},_scrollToBottom:function(){this._scrollTo(this.$list.scrollHeight)},_renderListStyle:function(){this.$list.style.transform="translate3d(0, "+this.distance+"px, 0)"},_start:function(i){this.$list.scrollTop>0||(this.pulling=!0,this.startPointer=t(i),this.$list.style.transition="transform .2s",this.preventDefault&&!e(i.target,this._options.preventDefaultException)&&i.preventDefault())},_move:function(i){if(this.pulling){var s=t(i),o=s.y-this.startPointer.y;if(o<0)return void this._scrollTo(-o);this.preventDefault&&!e(i.target,this._options.preventDefaultException)&&i.preventDefault(),this.distance=Math.floor(.5*o),this.distance>this._options.distance&&(this.distance=this._options.distance),m(this._renderListStyle.bind(this))}},_end:function(t){var i=this;this.pulling&&(this.preventDefault&&!e(t.target,this._options.preventDefaultException)&&t.preventDefault(),this.pulling=!1,this.$list.style.transition="transform .3s",this.$nextTick(function(){i.$list.style.transform=""}),this.distance>=this._options.distance&&(this.distance=0,this.scroller.clear()))}}}};!function(t,e){if("undefined"==typeof document)return e;t=t||"";var i=document.head||document.getElementsByTagName("head")[0],s=document.createElement("style");s.type="text/css",s.styleSheet?s.styleSheet.cssText=t:s.appendChild(document.createTextNode(t)),i.appendChild(s)}(".recyclerview-container{position:relative}.recyclerview-loading{position:absolute;top:0;left:0;width:100%;text-align:center;padding:10px;font-size:14px;color:#9e9e9e}.recyclerview{background:#fff;margin:0;padding:0;overflow-x:hidden;overflow-y:scroll;-webkit-overflow-scrolling:touch;width:100%;height:100%;position:absolute;box-sizing:border-box;contain:layout;will-change:transform}",void 0);var g={install:n};return"undefined"!=typeof window&&window.Vue&&window.Vue.use(n),g});
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.RecyclerView = factory());
+}(this, (function () { 'use strict';
+
+function __$styleInject(css, returnValue) {
+  if (typeof document === 'undefined') {
+    return returnValue;
+  }
+  css = css || '';
+  var head = document.head || document.getElementsByTagName('head')[0];
+  var style = document.createElement('style');
+  style.type = 'text/css';
+  if (style.styleSheet){
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+  head.appendChild(style);
+  return returnValue;
+}
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+
+
+var get$1 = function get$1(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get$1(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var set$1 = function set$1(object, property, value, receiver) {
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent !== null) {
+      set$1(parent, property, value, receiver);
+    }
+  } else if ("value" in desc && desc.writable) {
+    desc.value = value;
+  } else {
+    var setter = desc.set;
+
+    if (setter !== undefined) {
+      setter.call(receiver, value);
+    }
+  }
+
+  return value;
+};
+
+/* eslint-disable */
+/**
+ * Polyfill for Object.keys
+ *
+ * @see: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/keys
+ */
+if (!Object.keys) {
+  Object.keys = function () {
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !{ toString: null }.propertyIsEnumerable('toString'),
+        dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'],
+        dontEnumsLength = dontEnums.length;
+
+    return function (obj) {
+      if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
+
+      var result = [];
+
+      for (var prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) result.push(prop);
+      }
+
+      if (hasDontEnumBug) {
+        for (var i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) result.push(dontEnums[i]);
+        }
+      }
+      return result;
+    };
+  }();
+}
+
+var defaultPosition = {
+  x: 0,
+  y: 0
+};
+
+var mouseEvent = /mouse(down|move|up)/;
+var touchEvent = /touch(start|move|end)/;
+
+function getEventPosition(e) {
+  if (!e) return defaultPosition;
+  if (touchEvent.test(e.type)) {
+    var touch = e.touches[0];
+    return {
+      x: touch.clientX,
+      y: touch.clientY
+    };
+  } else if (mouseEvent.test(e.type)) {
+    return {
+      x: e.clientX,
+      y: e.clientY
+    };
+  }
+  return defaultPosition;
+}
+
+var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+  window.setTimeout(callback, 1000 / 60);
+};
+
+function preventDefaultException(el, exceptions) {
+  for (var i in exceptions) {
+    if (exceptions[i].test(el[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function assign(target, varArgs) {
+  // .length of function is 2
+  if (target == null) {
+    // TypeError if undefined or null
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  var to = Object(target);
+
+  for (var index = 1; index < arguments.length; index++) {
+    var nextSource = arguments[index];
+
+    if (nextSource) {
+      // Skip over if undefined or null
+      for (var nextKey in nextSource) {
+        // Avoid bugs when hasOwnProperty is shadowed
+        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+          to[nextKey] = nextSource[nextKey];
+        }
+      }
+    }
+  }
+  return to;
+}
+
+
+
+function find(arr, handler) {
+  for (var i = 0, len = arr.length; i < len; i++) {
+    if (handler(arr[i], i)) {
+      return arr[i];
+    }
+  }
+}
+
+/* eslint-disable*/
+/**
+ * Copyright 2015 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author surma https://github.com/surma
+ * Modified by Awe @hilongjw
+ */
+var MAX_COUNT = Infinity;
+
+/**
+ * Construct an infinite scroller.
+ * @param {Element} scroller The scrollable element to use as the infinite
+ *     scroll region.
+ * @param {InfiniteScrollerSource} source A provider of the content to be
+ *     displayed in the infinite scroll region.
+ */
+function InfiniteScroller(scroller, source, options) {
+  // Number of items to instantiate beyond current view in the opposite direction.
+  this.RUNWAY_ITEMS = options.prerender;
+  // Number of items to instantiate beyond current view in the opposite direction.
+  this.RUNWAY_ITEMS_OPPOSITE = options.remain;
+  // The number of pixels of additional length to allow scrolling to.
+  // this.SCROLL_RUNWAY = options.SCROLL_RUNWAY || SCROLL_RUNWAY
+
+  // The animation interval (in ms) for fading in content from tombstones.
+  this.ANIMATION_DURATION_MS = options.animation_duration_ms;
+  this.TOMBSTONE_CLASS = options.tombstone_class;
+  this.INVISIBLE_CLASS = options.invisible_class;
+  this.MAX_COUNT = options.count || MAX_COUNT;
+  this.column = options.column || 1;
+  this.waterflow = options.waterflow;
+
+  this.anchorItem = {
+    index: 0,
+    offset: 0
+  };
+  this.timer = null;
+  this.firstAttachedItem_ = 0;
+  this.lastAttachedItem_ = 0;
+  this.anchorScrollTop = 0;
+  this.tombstoneSize_ = 0;
+  this.tombstoneWidth_ = 0;
+  this.tombstones_ = [];
+  this.scroller_ = scroller;
+  this.source_ = source;
+  this.items_ = options.list || [];
+  this.loadedItems_ = 0;
+  this.requestInProgress_ = false;
+  this.cacheVM = options.cacheVM;
+  this.options = options;
+
+  if (!this.source_.fetch) {
+    this.setItems(options.list);
+  }
+
+  this.curPos = 0;
+  this.unusedNodes = [];
+  this.baseNode = document.createElement('div');
+
+  this.scroller_.addEventListener('scroll', this.onScroll_.bind(this));
+  window.addEventListener('resize', this.onResize_.bind(this));
+  window.addEventListener('orientationchange', this.onResize_.bind(this));
+
+  // Create an element to force the scroller to allow scrolling to a certain
+  // point.
+  // this.scrollRunway_ = document.createElement('div')
+
+  // // Internet explorer seems to require some text in this div in order to
+  // // ensure that it can be scrolled to.
+  // this.scrollRunway_.textContent = ' '
+  // this.scrollRunwayEnd_ = 0
+  // this.scrollRunway_.style.position = 'absolute'
+  // this.scrollRunway_.style.height = '1px'
+  // this.scrollRunway_.style.width = '1px'
+  // this.scrollRunway_.style.transition = 'transform 0.2s'
+  // this.scroller_.appendChild(this.scrollRunway_)
+  this.initPosList();
+  this.onResize_();
+}
+
+InfiniteScroller.prototype = {
+
+  /**
+   * Called when the browser window resizes to adapt to new scroller bounds and
+   * layout sizes of items within the scroller.
+   */
+  onResize_: function onResize_() {
+    // TODO: If we already have tombstones attached to the document, it would
+    // probably be more efficient to use one of them rather than create a new
+    // one to measure.
+    var tombstone = this.source_.createTombstone(this.baseNode.cloneNode(true));
+    tombstone.style.position = 'absolute';
+    this.scroller_.appendChild(tombstone);
+    tombstone.classList.remove(this.INVISIBLE_CLASS);
+    this.tombstoneSize_ = tombstone.offsetHeight / this.column;
+    this.tombstoneWidth_ = tombstone.offsetWidth;
+    this.scroller_.removeChild(tombstone);
+
+    // Reset the cached size of items in the scroller as they may no longer be
+    // correct after the item content undergoes layout.
+    for (var i = 0; i < this.items_.length; i++) {
+      this.items_[i].top = -1;
+      this.items_[i].height = this.items_[i].width = this.items_[i].cacheHeightCount = 0;
+    }
+    this.onScroll_();
+  },
+
+
+  /**
+   * Called when the scroller scrolls. This determines the newly anchored item
+   * and offset and then updates the visible elements, requesting more items
+   * from the source if we've scrolled past the end of the currently available
+   * content.
+   */
+  onScroll_: function onScroll_() {
+    var delta = this.scroller_.scrollTop - this.anchorScrollTop;
+
+    if (this.scroller_.scrollTop == 0) {
+      this.anchorItem = {
+        index: 0,
+        offset: 0
+      };
+    } else {
+      this.anchorItem = this.calculateAnchoredItem(this.anchorItem, delta);
+    }
+
+    this.anchorScrollTop = this.scroller_.scrollTop;
+
+    var lastScreenItem = this.calculateAnchoredItem(this.anchorItem, this.scroller_.offsetHeight);
+
+    if (delta < 0) {
+      this.fill(this.anchorItem.index - this.RUNWAY_ITEMS, lastScreenItem.index + this.RUNWAY_ITEMS_OPPOSITE);
+    } else {
+      this.fill(this.anchorItem.index - this.RUNWAY_ITEMS_OPPOSITE, lastScreenItem.index + this.RUNWAY_ITEMS);
+    }
+  },
+
+
+  /**
+   * Calculates the item that should be anchored after scrolling by delta from
+   * the initial anchored item.
+   * @param {{index: number, offset: number}} initialAnchor The initial position
+   *     to scroll from before calculating the new anchor position.
+   * @param {number} delta The offset from the initial item to scroll by.
+   * @return {{index: number, offset: number}} Returns the new item and offset
+   *     scroll should be anchored to.
+   */
+  calculateAnchoredItem: function calculateAnchoredItem(initialAnchor, delta) {
+    if (delta === 0) return initialAnchor;
+    delta += initialAnchor.offset;
+    var i = initialAnchor.index;
+    var tombstones = 0;
+    if (delta < 0) {
+      while (delta < 0 && i > 0 && this.items_[i - 1].height) {
+        delta += this.items_[i - 1].height;
+        i--;
+      }
+      tombstones = Math.max(-i, Math.ceil(Math.min(delta, 0) / this.tombstoneSize_));
+    } else {
+      while (delta > 0 && i < this.items_.length && this.items_[i].height && this.items_[i].height < delta) {
+        delta -= this.items_[i].height;
+        i++;
+      }
+      if (i >= this.items_.length || !this.items_[i].height) tombstones = Math.floor(Math.max(delta, 0) / this.tombstoneSize_);
+    }
+    i += tombstones;
+    delta -= tombstones * this.tombstoneSize_;
+    i = Math.min(i, this.MAX_COUNT - 1);
+
+    return {
+      index: Math.floor(i / this.column) * this.column,
+      offset: delta
+    };
+  },
+
+
+  /**
+   * Sets the range of items which should be attached and attaches those items.
+   * @param {number} start The first item which should be attached.
+   * @param {number} end One past the last item which should be attached.
+   */
+  fill: function fill(start, end) {
+    this.firstAttachedItem_ = Math.max(0, start);
+    this.lastAttachedItem_ = end;
+    this.attachContent();
+  },
+
+
+  /**
+   * Creates or returns an existing tombstone ready to be reused.
+   * @return {Element} A tombstone element ready to be used.
+   */
+  getTombstone: function getTombstone() {
+    var tombstone = this.tombstones_.pop();
+    if (tombstone) {
+      tombstone.classList.remove(this.INVISIBLE_CLASS);
+      tombstone.style.opacity = 1;
+      tombstone.style.transform = '';
+      tombstone.style.transition = '';
+      return tombstone;
+    }
+    return this.source_.createTombstone(this.baseNode.cloneNode(true));
+  },
+  layoutInView: function layoutInView(i) {
+    var top = this.posList.get(Math.floor(i / this.column), i % this.column);
+    if (!top) return true;
+    var index = top - this.anchorScrollTop;
+    return index > -window.innerHeight * .5 && index < window.innerHeight;
+  },
+  getUnUsedNodes: function getUnUsedNodes(clearAll) {
+    if (this.waterflow) {
+      for (var i = 0, len = this.items_.length; i < len; i++) {
+        if (this.items_[i].node && (clearAll || !this.layoutInView(i))) {
+          if (this.items_[i].vm) {
+            this.clearItem(this.items_[i]);
+          } else {
+            this.clearTombstone(this.items_[i]);
+          }
+          this.items_[i].vm = null;
+          this.items_[i].node = null;
+        }
+      }
+    } else {
+      for (var _i = 0, _len = this.items_.length; _i < _len; _i++) {
+        if (_i === this.firstAttachedItem_) {
+          _i = this.lastAttachedItem_ - 1;
+          continue;
+        }
+        if (this.items_[_i].vm) {
+          this.clearItem(this.items_[_i]);
+        } else {
+          this.clearTombstone(this.items_[_i]);
+        }
+
+        this.items_[_i].vm = null;
+        this.items_[_i].node = null;
+      }
+    }
+  },
+  clearItem: function clearItem(item) {
+    if (this.options.reuseVM) {
+      this.scroller_.removeChild(item.node);
+      this.source_.free(item.data);
+    } else {
+      if (this.cacheVM && item.node) {
+        return this.scroller_.removeChild(item.node);
+      }
+      item.vm.$destroy();
+      if (item.node) {
+        this.unusedNodes.push(item.node);
+      }
+    }
+  },
+  clearTombstone: function clearTombstone(item) {
+    if (item.node) {
+      if (item.node.classList.contains(this.TOMBSTONE_CLASS)) {
+        this.tombstones_.push(item.node);
+        this.tombstones_[this.tombstones_.length - 1].classList.add(this.INVISIBLE_CLASS);
+      } else {
+        this.unusedNodes.push(item.node);
+      }
+    }
+  },
+  clearUnUsedNodes: function clearUnUsedNodes() {
+    while (this.unusedNodes.length) {
+      this.scroller_.removeChild(this.unusedNodes.pop());
+    }
+  },
+  getNodePosition: function getNodePosition() {
+    // Fix scroll position in case we have realized the heights of elements
+    // that we didn't used to know.
+    // TODO: We should only need to do this when a height of an item becomes
+    // known above.
+    this.anchorScrollTop = 0;
+    for (var _i2 = 0; _i2 < this.anchorItem.index; _i2++) {
+      this.anchorScrollTop += this.items_[_i2].height || this.tombstoneSize_;
+    }
+    this.anchorScrollTop += this.anchorItem.offset;
+
+    this.curPos = this.anchorScrollTop - this.anchorItem.offset;
+    var i = this.anchorItem.index;
+    while (i > this.firstAttachedItem_) {
+      this.curPos -= this.items_[i - 1].height || this.tombstoneSize_;
+      i--;
+    }
+    while (i < this.firstAttachedItem_) {
+      this.curPos += this.items_[i].height || this.tombstoneSize_;
+      i++;
+    }
+  },
+  initPosList: function initPosList() {
+    var data = {};
+    for (var i = 0, len = this.column; i < len; i++) {
+      data[i] = this.curPos;
+    }
+
+    this.posList = {
+      data: {
+        0: data
+      },
+      get: function get(row, col) {
+        if (!this.data[row]) {
+          var _data = {};
+          for (var _i3 = 0, _len2 = this.column; _i3 < _len2; _i3++) {
+            _data[_i3] = this.curPos;
+          }
+          this.data[row] = _data; // Array.from({ length: this.column }).map(i => this.curPos)
+        }
+        if (col === undefined) return this.data[row];
+        return this.data[row][col];
+      },
+      set: function set(row, col, val) {
+        this.get(row)[col] = val;
+      }
+    };
+  },
+  tombstoneLayout: function tombstoneLayout(tombstoneAnimations) {
+    var i = void 0;
+    var anim = void 0;
+    var x = void 0;
+    for (i in tombstoneAnimations) {
+      anim = tombstoneAnimations[i];
+      x = i % this.column * this.items_[i].width;
+      this.items_[i].node.style.transform = 'translate3d(' + x + 'px,' + (this.anchorScrollTop + anim[1]) * this.column + 'px, 0) scale(' + this.tombstoneWidth_ / this.items_[i].width + ', ' + this.tombstoneSize_ / this.items_[i].height + ')';
+      // Call offsetTop on the nodes to be animated to force them to apply current transforms.
+      this.items_[i].node.offsetTop;
+      anim[0].offsetTop;
+      this.items_[i].node.style.transition = 'transform ' + this.ANIMATION_DURATION_MS + 'ms';
+    }
+  },
+  itemLayout: function itemLayout(tombstoneAnimations) {
+    var i = void 0;
+    var anim = void 0;
+    var x = 0;
+    var y = 0;
+    var row = 0;
+    var curPosList = void 0;
+
+    var size = 0;
+
+    for (i = this.firstAttachedItem_; i < this.lastAttachedItem_; i++) {
+      anim = tombstoneAnimations[i];
+      if (this.waterflow) {
+        row = Math.floor(i / this.column);
+      }
+      x = i % this.column * (this.items_[i].width || this.tombstoneWidth_);
+      y = this.waterflow ? this.posList.get(row, i % this.column) : this.curPos;
+      if (anim) {
+        anim[0].style.transition = 'transform ' + this.ANIMATION_DURATION_MS + 'ms, opacity ' + this.ANIMATION_DURATION_MS + 'ms';
+        anim[0].style.transform = 'translate3d(' + x + 'px,' + y + 'px, 0) scale(' + this.items_[i].width / this.tombstoneWidth_ + ', ' + this.items_[i].height / this.tombstoneSize_ + ')';
+        anim[0].style.opacity = 0;
+      }
+      if (this.items_[i].node && this.curPos !== this.items_[i].top) {
+        if (!anim) this.items_[i].node.style.transition = '';
+        this.items_[i].node.style.transform = 'translate3d(' + x + 'px,' + y + 'px, 0)';
+      }
+      this.items_[i].top = y;
+
+      if ((i + 1) % this.column === 0) {
+        this.curPos += (this.items_[i].height || this.tombstoneSize_) * this.column;
+      }
+      if (this.waterflow) {
+        this.posList.set(row + 1, i % this.column, y + (this.items_[i].height || this.tombstoneSize_) * this.column);
+      }
+    }
+  },
+  setAnimatePosition: function setAnimatePosition(tombstoneAnimations) {
+    this.tombstoneLayout(tombstoneAnimations);
+    this.itemLayout(tombstoneAnimations);
+  },
+  renderItems: function renderItems() {
+    var tombstoneAnimations = {};
+    var node = void 0;
+    var newNodes = [];
+    var i = void 0;
+
+    var last = Math.floor((this.lastAttachedItem_ + this.RUNWAY_ITEMS) / this.column) * this.column;
+
+    if (last > this.MAX_COUNT) {
+      this.lastAttachedItem_ = this.MAX_COUNT;
+    }
+    // Create DOM nodes.
+    for (i = this.firstAttachedItem_; i < this.lastAttachedItem_; i++) {
+      while (this.items_.length <= i) {
+        this.addItem_();
+      }
+      if (this.items_[i].node) {
+        // if it's a tombstone but we have data, replace it.
+        if (this.items_[i].node.classList.contains(this.TOMBSTONE_CLASS) && this.items_[i].data) {
+          // TODO: Probably best to move items on top of tombstones and fade them in instead.
+          if (this.ANIMATION_DURATION_MS) {
+            this.items_[i].node.style.zIndex = 1;
+            tombstoneAnimations[i] = [this.items_[i].node, this.items_[i].top - this.anchorScrollTop];
+          } else {
+            this.items_[i].node.classList.add(this.INVISIBLE_CLASS);
+            this.tombstones_.push(this.items_[i].node);
+          }
+          this.items_[i].node = null;
+        } else {
+          continue;
+        }
+      }
+      if (this.waterflow) {
+        if (this.layoutInView(i)) {
+          if (this.items_[i].data) {
+            node = this.source_.render(this.items_[i].data, this.unusedNodes.pop() || this.baseNode.cloneNode(true), this.items_[i]);
+          } else {
+            node = this.getTombstone();
+          }
+          // Maybe don't do this if it's already attached?
+          node.style.position = 'absolute';
+          this.items_[i].top = -1;
+          // this.scroller_.appendChild(node)
+          this.items_[i].node = node;
+          newNodes.push(node);
+        }
+      } else {
+        if (this.items_[i].data) {
+          node = this.source_.render(this.items_[i].data, this.unusedNodes.pop() || this.baseNode.cloneNode(true), this.items_[i]);
+        } else {
+          node = this.getTombstone();
+        }
+        // Maybe don't do this if it's already attached?
+        node.style.position = 'absolute';
+        this.items_[i].top = -1;
+        // this.scroller_.appendChild(node)
+        this.items_[i].node = node;
+        newNodes.push(node);
+      }
+    }
+
+    var len = newNodes.length;
+    for (i = 0; i < len; i++) {
+      this.scroller_.appendChild(newNodes[i]);
+    }
+    return tombstoneAnimations;
+  },
+  cacheItemHeight: function cacheItemHeight(force) {
+    var rect = {};
+    for (var i = this.firstAttachedItem_; i < this.lastAttachedItem_; i++) {
+      // cacheItemsHeight
+      if (this.items_[i].data && this.items_[i].node && (force || !this.items_[i].height)) {
+        this.items_[i].height = this.items_[i].node.offsetHeight / this.column;
+        this.items_[i].width = this.items_[i].node.offsetWidth;
+        this.items_[i].cacheHeightCount = 0;
+      } else if (this.items_[i].cacheHeightCount < 10) {
+        // if height's cache is not match
+        this.items_[i].cacheHeightCount++;
+        if (this.items_[i].height && this.items_[i].node && this.items_[i].height !== this.items_[i].node.offsetHeight / this.column) {
+          this.items_[i].height = this.items_[i].node.offsetHeight / this.column;
+        }
+      }
+    }
+  },
+
+
+  /**
+   * Attaches content to the scroller and updates the scroll position if
+   * necessary.
+   */
+  attachContent: function attachContent() {
+    var _this = this;
+
+    this.getUnUsedNodes();
+
+    var tombstoneAnimations = this.renderItems();
+
+    this.clearUnUsedNodes();
+
+    this.cacheItemHeight();
+
+    this.getNodePosition();
+
+    this.setAnimatePosition(tombstoneAnimations);
+
+    // this.setScrollRunway()
+
+    if (this.ANIMATION_DURATION_MS) {
+      // TODO: Should probably use transition end, but there are a lot of animations we could be listening to.
+      setTimeout(function () {
+        _this.tombstoneAnimation(tombstoneAnimations);
+      }, this.ANIMATION_DURATION_MS);
+    }
+
+    this.maybeRequestContent();
+  },
+  setItems: function setItems(list) {
+    list = list || [];
+    this.items_ = list;
+    this.MAX_COUNT = list.length;
+  },
+  scrollToIndex: function scrollToIndex(index) {
+    var commonItemCount = this.lastAttachedItem_ - this.firstAttachedItem_;
+    this.fill(index - commonItemCount, index + 1);
+  },
+  setScrollRunway: function setScrollRunway() {
+    this.scrollRunwayEnd_ = Math.max(this.scrollRunwayEnd_, this.curPos + this.SCROLL_RUNWAY);
+    this.scrollRunway_.style.transform = 'translate(0, ' + this.scrollRunwayEnd_ + 'px)';
+    this.scroller_.scrollTop = this.anchorScrollTop;
+  },
+  tombstoneAnimation: function tombstoneAnimation(tombstoneAnimations) {
+    var anim = void 0;
+    for (var i in tombstoneAnimations) {
+      anim = tombstoneAnimations[i];
+      anim[0].classList.add(this.INVISIBLE_CLASS);
+      this.tombstones_.push(anim[0]);
+    }
+    tombstoneAnimations = null;
+  },
+
+
+  /**
+   * Requests additional content if we don't have enough currently.
+   */
+  maybeRequestContent: function maybeRequestContent() {
+    var _this2 = this;
+
+    // Don't issue another request if one is already in progress as we don't
+    // know where to start the next request yet.
+    if (this.requestInProgress_) return;
+    var itemsNeeded = this.lastAttachedItem_ - this.loadedItems_;
+    if (itemsNeeded <= 0) return;
+    this.requestInProgress_ = true;
+    if (!this.source_.fetch) return;
+    this.source_.fetch(itemsNeeded, this.loadedItems_).then(function (data) {
+      _this2.MAX_COUNT = data.count;
+      _this2.addContent(data.list);
+    });
+  },
+
+
+  /**
+   * Adds an item to the items list.
+   */
+  addItem_: function addItem_() {
+    this.items_.push({
+      vm: null,
+      data: null,
+      node: null,
+      height: 0,
+      width: 0,
+      top: 0
+    });
+  },
+
+
+  /**
+   * Adds the given array of items to the items list and then calls
+   * attachContent to update the displayed content.
+   * @param {Array<Object>} items The array of items to be added to the infinite
+   *     scroller list.
+   */
+  addContent: function addContent(items) {
+    if (!items.length) return;
+    this.requestInProgress_ = false;
+
+    var index = void 0;
+    for (var i = 0; i < items.length; i++) {
+      if (this.items_.length <= this.loadedItems_) {
+        this.addItem_();
+      }
+      if (this.loadedItems_ <= this.MAX_COUNT) {
+        index = this.loadedItems_++;
+        this.items_[index].data = items[i];
+      }
+    }
+
+    this.attachContent();
+  },
+  clear: function clear() {
+    this.loadedItems_ = 0;
+    this.requestInProgress_ = false;
+
+    this.firstAttachedItem_ = -1;
+    this.lastAttachedItem_ = -1;
+
+    this.getUnUsedNodes(true);
+    this.clearUnUsedNodes();
+
+    this.items_ = [];
+
+    this.onResize_();
+  },
+  destroy: function destroy() {
+    this.scroller_.removeEventListener('scroll', this.onScroll_);
+    window.removeEventListener('resize', this.onResize_);
+    window.removeEventListener('orientationchange', this.onResize_);
+    this.clear();
+  }
+};
+
+var ContentSource = function () {
+  function ContentSource(Vue, options) {
+    var _this = this;
+
+    classCallCheck(this, ContentSource);
+
+    this.itemRender = options.item;
+    this.TombstoneRender = options.tombstone;
+    this.fetch = options.fetch;
+    this.Vue = Vue;
+    this.options = options;
+    this.itemCache = {
+      data: {},
+      length: 0,
+      get: function get(key) {
+        return this.data[key];
+      },
+      set: function set(key, vm) {
+        this.length++;
+        this.data[key] = vm;
+        if (this.length > options.cacheVM && options.cacheVM > 50) {
+          this.recycle(10, key);
+        }
+      },
+      recycle: function recycle(count, except) {
+        var key = void 0;
+        var keys = Object.keys(this.data);
+        var len = keys.length;
+        while (count) {
+          count--;
+          key = keys[Math.floor(Math.random() * len)];
+          this.data[key] && this.length-- && this.data[key].$destroy();
+          this.data[key] = null;
+        }
+      }
+    };
+
+    this.reuseVM = {
+      queue: [
+        // {
+        //   inuse: false,
+        //   vm: vm
+        // }
+      ],
+      generate: function generate(data, el) {
+        var item = find(_this.reuseVM.queue, function (item) {
+          return !item.inuse;
+        });
+
+        // this.reuseVM.queue.find(i => !i.inuse)
+
+        if (!item) {
+          var vmOptions = {
+            props: {
+              data: data
+            }
+          };
+          _this.options.props.data = data;
+          if (_this.options.props) {
+            Object.keys(_this.options.props).map(function (key) {
+              vmOptions.props[key] = _this.options.props[key];
+            });
+          }
+          var vmConfig = {
+            el: el,
+            data: vmOptions.props,
+            render: function render(h) {
+              return h(_this.itemRender, vmOptions);
+            }
+          };
+          item = {
+            id: data.id,
+            inuse: true,
+            vm: new _this.Vue(vmConfig)
+          };
+          _this.reuseVM.queue.push(item);
+        } else {
+          item.vm.data = data;
+          // item.vm.$forceUpdate()
+          item.inuse = true;
+          item.id = data.id;
+        }
+
+        return item.vm;
+      },
+      free: function free(id) {
+        var item = find(this.queue, function (i) {
+          return i.id === id;
+        });
+        item.inuse = false;
+      },
+      destroy: function destroy(id, all) {
+        for (var i = 0, len = this.queue.length; i < len; i++) {
+          if (this.queue[i].id === id || all) {
+            this.queue.vm && this.queue.vm.$destroy();
+            this.queue.splice(i, 1);
+          }
+        }
+      }
+    };
+  }
+
+  createClass(ContentSource, [{
+    key: 'createTombstone',
+    value: function createTombstone(el) {
+      var _this2 = this;
+
+      var vm = new this.Vue({
+        el: el,
+        render: function render(h) {
+          return h(_this2.TombstoneRender);
+        }
+      });
+      return vm.$el;
+    }
+  }, {
+    key: 'free',
+    value: function free(data) {
+      this.reuseVM.free(data.id);
+    }
+  }, {
+    key: 'render',
+    value: function render(data, el, item) {
+      var _this3 = this;
+
+      if (this.options.reuseVM) {
+        var _vm = this.reuseVM.generate(data, el);
+        item.vm = _vm;
+        return _vm.$el;
+      }
+
+      var vm = void 0;
+      var vmOptions = {
+        props: {
+          data: data
+        }
+      };
+      this.options.props.data = data;
+      if (this.options.props) {
+        Object.keys(this.options.props).map(function (key) {
+          vmOptions.props[key] = _this3.options.props[key];
+        });
+      }
+      var vmConfig = {
+        el: el,
+        render: function render(h) {
+          return h(_this3.itemRender, vmOptions);
+        }
+      };
+      if (this.options.cacheVM) {
+        vm = this.itemCache.get(data.id);
+        if (vm) {
+          item.vm = vm;
+          return vm.$el;
+        }
+        vm = new this.Vue(vmConfig);
+        this.itemCache.set(data.id, vm);
+        item.vm = vm;
+        return vm.$el;
+      }
+      vm = new this.Vue(vmConfig);
+      item.vm = vm;
+      return vm.$el;
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.reuseVM.destroy(null, true);
+      return this.reuseVM.queue;
+    }
+  }]);
+  return ContentSource;
+}();
+
+var Loading = {
+  render: function render(h) {
+    return h('div', {
+      attrs: {
+        class: 'recyclerview-loading'
+      }
+    }, 'Loading...');
+  }
+};
+
+var Tombstone = {
+  render: function render(h) {
+    return h('div', {
+      attrs: {
+        class: 'recyclerview-item tombstone'
+      },
+      style: {
+        height: '100px',
+        width: '100%'
+      }
+    }, '');
+  }
+};
+
+var options = {
+  preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|IMG)$/ },
+  distance: 50,
+  animation_duration_ms: 200,
+  tombstone_class: 'tombstone',
+  invisible_class: 'invisible',
+  prerender: 20,
+  remain: 10,
+  count: Infinity,
+  preventDefault: false,
+  column: 1,
+  waterflow: false,
+  cacheVM: 0,
+  reuseVM: false,
+  props: {}
+};
+
+var RecyclerView = (function (Vue) {
+  return {
+    name: 'RecyclerView',
+    props: {
+      fetch: Function,
+      list: Array,
+      item: Object,
+      loading: Object,
+      tombstone: {
+        type: Object,
+        default: function _default() {
+          return Tombstone;
+        }
+      },
+      column: Number,
+      prerender: Number,
+      remain: Number,
+      count: Number,
+      waterflow: Boolean,
+      preventDefault: Boolean,
+      options: Object,
+      tag: {
+        type: String,
+        default: 'div'
+      }
+    },
+    render: function render(h) {
+      return h(this.tag, {
+        attrs: {
+          class: 'recyclerview-container'
+        }
+      }, [h(this.loading || Loading), h(this.tag, {
+        attrs: {
+          class: 'recyclerview'
+        },
+        on: {
+          touchstart: this._start,
+          touchmove: this._move,
+          touchend: this._end,
+          touchcancel: this._end,
+          mousedown: this._start,
+          mousemove: this._move,
+          mouseup: this._end
+        }
+      })]);
+    },
+    data: function data() {
+      return {
+        startPointer: {
+          x: 0,
+          y: 0
+        },
+        _options: {},
+        distance: 0,
+        pulling: false,
+        _contentSource: null,
+        scroller: null
+      };
+    },
+    mounted: function mounted() {
+      this.init();
+    },
+    beforeDestroy: function beforeDestroy() {
+      this.scroller.destroy();
+      this.scroller = null;
+    },
+
+    methods: {
+      init: function init() {
+        this._options = assign({}, options, {
+          prerender: this.prerender || options.prerender,
+          remain: this.remain || options.remain,
+          column: this.column || options.column,
+          count: this.count || options.count,
+          waterflow: this.waterflow || options.waterflow,
+          fetch: this.fetch,
+          list: this.list,
+          item: this.item,
+          loading: this.loading,
+          tombstone: this.tombstone
+        }, this.options);
+
+        this._contentSource = new ContentSource(Vue, this._options);
+
+        this.$list = this.$el.querySelector('.recyclerview');
+        this.scroller = new InfiniteScroller(this.$list, this._contentSource, this._options);
+        this.$emit('inited');
+      },
+      scrollToIndex: function scrollToIndex(index) {
+        var _this = this;
+
+        if (this.waterflow) {
+          for (var i = 0, len = this.scroller.items_.length; i < len; i++) {
+            if (i === index) {
+              this._scrollTo(this.scroller.items_[i].top - this.scroller.items_[i].height * this._options.column + this.$list.offsetWidth);
+            }
+          }
+          return;
+        }
+        index = Number(index);
+        this.scroller.scrollToIndex(index);
+        this.$nextTick(function () {
+          _this._scrollToBottom();
+        });
+      },
+      _scrollTo: function _scrollTo(top) {
+        top = top || 0;
+        this.$list.scrollTop = Number(top);
+      },
+      _scrollToBottom: function _scrollToBottom() {
+        this._scrollTo(this.$list.scrollHeight);
+      },
+      _renderListStyle: function _renderListStyle() {
+        this.$list.style.transform = 'translate3d(0, ' + this.distance + 'px, 0)';
+      },
+      _start: function _start(e) {
+        if (this.$list.scrollTop > 0) return;
+        this.pulling = true;
+        this.startPointer = getEventPosition(e);
+        this.$list.style.transition = 'transform .2s';
+        if (this.preventDefault && !preventDefaultException(e.target, this._options.preventDefaultException)) {
+          e.preventDefault();
+        }
+      },
+      _move: function _move(e) {
+        if (!this.pulling) return;
+        var pointer = getEventPosition(e);
+        var distance = pointer.y - this.startPointer.y;
+
+        if (distance < 0) {
+          this._scrollTo(-distance);
+          return;
+        }
+
+        if (this.preventDefault && !preventDefaultException(e.target, this._options.preventDefaultException)) {
+          e.preventDefault();
+        }
+
+        this.distance = Math.floor(distance * 0.5);
+        if (this.distance > this._options.distance) {
+          this.distance = this._options.distance;
+        }
+        requestAnimationFrame(this._renderListStyle.bind(this));
+      },
+      _end: function _end(e) {
+        var _this2 = this;
+
+        if (!this.pulling) return;
+        if (this.preventDefault && !preventDefaultException(e.target, this._options.preventDefaultException)) {
+          e.preventDefault();
+        }
+        this.pulling = false;
+        this.$list.style.transition = 'transform .3s';
+        this.$nextTick(function () {
+          _this2.$list.style.transform = '';
+        });
+        if (this.distance >= this._options.distance) {
+          this.distance = 0;
+          this.$emit('clear');
+          this.scroller.clear();
+        }
+      }
+    }
+  };
+});
+
+__$styleInject(".recyclerview-container{position:relative}.recyclerview-loading{position:absolute;top:0;left:0;width:100%;text-align:center;padding:10px;font-size:14px;color:#9e9e9e}.recyclerview{background:#fff;margin:0;padding:0;overflow-x:hidden;overflow-y:scroll;-webkit-overflow-scrolling:touch;width:100%;height:100%;position:absolute;box-sizing:border-box;contain:layout;will-change:transform}", undefined);
+
+function install(Vue) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  var component = RecyclerView(Vue);
+  Vue.component(component.name, component);
+  return component;
+}
+
+var index = {
+  install: install
+};
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(install);
+}
+
+return index;
+
+})));

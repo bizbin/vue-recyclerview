@@ -40,7 +40,7 @@ export default function InfiniteScroller (scroller, source, options) {
   this.ANIMATION_DURATION_MS = options.animation_duration_ms
   this.TOMBSTONE_CLASS = options.tombstone_class
   this.INVISIBLE_CLASS = options.invisible_class
-  this.MAX_COUNT = MAX_COUNT
+  this.MAX_COUNT = options.count || MAX_COUNT
   this.column = options.column || 1
   this.waterflow = options.waterflow
 

@@ -144,7 +144,8 @@
             template: `<div id="app">
                 <RecyclerView
                   style="height: 100vh"
-                  :prerender="30"
+                  :prerender="5"
+                  :remain="5"
                   :fetch="MiFetch" 
                   :item="item" 
                   :tombstone="tombstone"

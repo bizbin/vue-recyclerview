@@ -39,6 +39,7 @@ const options = {
   invisible_class: 'invisible',
   prerender: 20,
   remain: 10,
+  count: Infinity,
   preventDefault: false,
   column: 1,
   waterflow: false,
@@ -62,6 +63,7 @@ export default (Vue) => {
       column: Number,
       prerender: Number,
       remain: Number,
+      count: Number,
       waterflow: Boolean,
       preventDefault: Boolean,
       options: Object,
@@ -119,6 +121,7 @@ export default (Vue) => {
           prerender: this.prerender || options.prerender,
           remain: this.remain || options.remain,
           column: this.column || options.column,
+          count: this.count || options.count,
           waterflow: this.waterflow || options.waterflow,
           fetch: this.fetch,
           list: this.list,
@@ -203,6 +206,7 @@ export default (Vue) => {
         })
         if (this.distance >= this._options.distance) {
           this.distance = 0
+          this.$emit('clear')
           this.scroller.clear()
         }
       }
